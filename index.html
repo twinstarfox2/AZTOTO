@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="파워볼 명예의전당">
+<title>호주 파워볼 명예의 전당 번호 생성기</title>
+<style>
+  :root{
+    --bg:#0f1220; --card:#1b1f33; --accent:#ffb400; --accent2:#ff5c5c;
+    --text:#f2f2f7; --muted:#9aa0b4; --good:#4ade80;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    padding-bottom:40px;
+  }
+  header{
+    padding:24px 20px 12px; text-align:center;
+  }
+  header h1{ font-size:20px; margin:0 0 4px; }
+  header p{ margin:0; color:var(--muted); font-size:13px; }
+  .container{ max-width:480px; margin:0 auto; padding:0 16px; }
+  .card{
+    background:var(--card); border-radius:16px; padding:18px; margin-top:16px;
+    box-shadow:0 4px 14px rgba(0,0,0,.25);
+  }
+  .card h2{ font-size:15px; margin:0 0 12px; color:var(--accent); }
+  label{ display:block; font-size:12px; color:var(--muted); margin:10px 0 4px; }
+  input[type=text], input[type=number]{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid #333a55;
+    background:#12162a; color:var(--text); font-size:15px;
+  }
+  .row{ display:flex; gap:10px; }
+  .row > div{ flex:1; }
+  button{
+    width:100%; padding:14px; border:none; border-radius:12px; font-size:16px;
+    font-weight:700; margin-top:16px; cursor:pointer;
+  }
+  .btn-primary{ background:var(--accent); color:#1a1200; }
+  .btn-primary:active{ transform:scale(0.98); }
+  .btn-secondary{
+    background:transparent; color:var(--muted); border:1px solid #333a55;
+  }
+  details summary{ cursor:pointer; color:var(--muted); font-size:13px; padding:4px 0; }
+  .balls{ display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+  .ball{
+    width:40px; height:40px; border-radius:50%; display:flex; align-items:center;
+    justify-content:center; font-weight:700; font-size:15px; color:#1a1200;
+    background:#dfe3f0;
+  }
+  .ball.hot{ background:var(--accent); box-shadow:0 0 0 2px #7a5200 inset; }
+  .ball.pb{ background:var(--accent2); color:#2a0000; }
+  .set-card{ margin-top:12px; }
+  .set-label{ font-size:12px; color:var(--muted); margin-bottom:6px; }
+  .legend{ font-size:11px; color:var(--muted); margin-top:8px; }
+  .legend span.dot{
+    display:inline-block; width:10px; height:10px; border-radius:50%;
+    margin-right:4px; vertical-align:middle;
+  }
+  a{ color:var(--accent); }
+  .save-msg{ font-size:12px; color:var(--good); min-height:16px; margin-top:6px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🎱 호주 파워볼 명예의 전당 번호 생성기</h1>
+    <p>Hot &amp; Cold 번호 기반 랜덤 조합 (7/35 + 파워볼 1/20)</p>
+  </header>
+
+  <!-- 명예의 전당 설정 -->
+  <div class="card">
+    <h2>⚙️ 명예의 전당 (Hot &amp; Cold) 설정</h2>
+    <p class="legend">
+      실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
+      아래에 직접 번호를 입력해두면 이 기기에 계속 저장됩니다.
+      최신 통계는 The Lott 공식 페이지에서 확인하세요:
+      <a href="https://www.thelott.com/real-winners/powerball/hot-cold-powerball-numbers" target="_blank">Hot &amp; Cold 페이지</a>
+    </p>
+
+    <label>메인 번호(1~35) 누적 상위 번호 목록 (순위 순으로 입력)</label>
+    <input type="text" id="hotMain" placeholder="예: 17, 32, 8, 25">
+    <label>↳ 그 중 매 조합에 항상 포함할 개수</label>
+    <input type="number" id="hotMainCount" value="2" min="0" max="7">
+
+    <label>메인 번호(1~35) 누적 하위 번호 목록 (순위 순으로 입력)</label>
+    <input type="text" id="coldMain" placeholder="예: 34, 3, 9, 21, 28, 15">
+    <label>↳ 그 중 조합에서 항상 제외할 개수</label>
+    <input type="number" id="coldMainCount" value="5" min="0" max="30">
+
+    <label>파워볼(1~20) 누적 상위 번호 — 뽑힐 확률 가중치 ↑ (강제 포함은 아님)</label>
+    <input type="text" id="hotPB" placeholder="예: 2, 4">
+
+    <label>파워볼(1~20) 누적 하위 번호 — 후보에서 제외</label>
+    <input type="text" id="coldPB" placeholder="예: 14, 16">
+
+    <button class="btn-secondary" id="saveBtn">저장</button>
+    <div class="save-msg" id="saveMsg"></div>
+  </div>
+
+  <!-- 생성 -->
+  <div class="card">
+    <h2>🎲 번호 생성</h2>
+    <label>생성할 조합 개수</label>
+    <input type="number" id="numSets" value="1" min="1" max="5">
+    <button class="btn-primary" id="genBtn">번호 생성하기</button>
+
+    <div class="legend">
+      <span class="dot" style="background:var(--accent)"></span> 명예의 전당(Hot) 번호
+      &nbsp;&nbsp;
+      <span class="dot" style="background:#dfe3f0"></span> 랜덤 번호
+      &nbsp;&nbsp;
+      <span class="dot" style="background:var(--accent2)"></span> 파워볼
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <details class="card">
+    <summary>📱 아이폰에서 앱처럼 쓰는 방법 (App Store 설치 없이)</summary>
+    <p style="font-size:13px; color:var(--muted); line-height:1.6;">
+      1. 이 HTML 파일을 iCloud Drive(파일 앱)에 저장하거나, GitHub Pages 등에 올려 링크로 접속하세요.<br>
+      2. Safari로 이 페이지를 여세요.<br>
+      3. 하단 공유 버튼(⬆️) → <b>"홈 화면에 추가"</b> 를 누르면 앱 아이콘처럼 홈 화면에 생기고,
+      이후에는 아이콘을 눌러 앱처럼 실행할 수 있습니다. (App Store 설치가 아니라 웹페이지 바로가기입니다.)<br>
+      4. 인터넷 연결 없이도 번호 생성 자체는 동작합니다 (설정값은 이 기기에 저장되어 있으므로).
+    </p>
+  </details>
+
+  <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:20px;">
+    ⚠️ 복권은 매 회차 완전 독립적인 무작위 추첨입니다. Hot/Cold 번호를 사용해도 당첨 확률은 수학적으로
+    동일합니다 — 이 도구는 재미를 위한 것입니다.
+  </p>
+  <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:8px;">
+    본 페이지는 비공식 팬 제작 도구이며, The Lott / Tabcorp 및 Powerball 공식 운영사와 아무런 제휴
+    관계가 없습니다. "Powerball"은 각 권리자의 상표입니다.
+  </p>
+</div>
+
+<script>
+const MAIN_RANGE = [1, 35];
+const MAIN_PICKS = 7;
+const PB_RANGE = [1, 20];
+const HOT_PB_WEIGHT = 3; // 파워볼 hot 번호 가중치 배수
+
+function parseNums(str) {
+  return (str || "")
+    .split(",")
+    .map(s => parseInt(s.trim(), 10))
+    .filter(n => !isNaN(n));
+}
+
+function loadConfig() {
+  const cfg = JSON.parse(localStorage.getItem("pbHallOfFame") || "{}");
+  document.getElementById("hotMain").value = cfg.hotMain || "";
+  document.getElementById("hotMainCount").value = cfg.hotMainCount ?? 2;
+  document.getElementById("coldMain").value = cfg.coldMain || "";
+  document.getElementById("coldMainCount").value = cfg.coldMainCount ?? 5;
+  document.getElementById("hotPB").value = cfg.hotPB || "";
+  document.getElementById("coldPB").value = cfg.coldPB || "";
+}
+
+function saveConfig() {
+  const cfg = {
+    hotMain: document.getElementById("hotMain").value,
+    hotMainCount: parseInt(document.getElementById("hotMainCount").value, 10) || 0,
+    coldMain: document.getElementById("coldMain").value,
+    coldMainCount: parseInt(document.getElementById("coldMainCount").value, 10) || 0,
+    hotPB: document.getElementById("hotPB").value,
+    coldPB: document.getElementById("coldPB").value,
+  };
+  localStorage.setItem("pbHallOfFame", JSON.stringify(cfg));
+  const msg = document.getElementById("saveMsg");
+  msg.textContent = "저장되었습니다 ✔";
+  setTimeout(() => (msg.textContent = ""), 2000);
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function range(a, b) {
+  const out = [];
+  for (let i = a; i <= b; i++) out.push(i);
+  return out;
+}
+
+function generateMain(hot, cold, hotCount, coldCount) {
+  const hotValid = hot.filter(n => n >= MAIN_RANGE[0] && n <= MAIN_RANGE[1]);
+  const uniqueHot = [...new Set(hotValid)].slice(0, Math.min(hotCount, MAIN_PICKS));
+
+  let coldList = [...new Set(cold)]
+    .filter(n => !uniqueHot.includes(n))
+    .slice(0, coldCount);
+
+  const needed = MAIN_PICKS - uniqueHot.length;
+
+  // 안전장치: hot+cold 설정이 너무 많아 뽑을 번호가 부족해지면
+  // 순위가 낮은(뒤쪽) cold 번호부터 제외 목록에서 풀어준다.
+  while (
+    coldList.length > 0 &&
+    MAIN_RANGE[1] - MAIN_RANGE[0] + 1 - uniqueHot.length - coldList.length < needed
+  ) {
+    coldList = coldList.slice(0, -1);
+  }
+  const coldSet = new Set(coldList);
+
+  const pool = range(MAIN_RANGE[0], MAIN_RANGE[1])
+    .filter(n => !uniqueHot.includes(n) && !coldSet.has(n));
+
+  const picked = shuffle(pool).slice(0, needed);
+
+  const all = [...uniqueHot, ...picked].sort((a, b) => a - b);
+  return { numbers: all, hotUsed: uniqueHot };
+}
+
+function generatePowerball(hot, cold) {
+  const coldSet = new Set(cold);
+  const pool = range(PB_RANGE[0], PB_RANGE[1]).filter(n => !coldSet.has(n));
+
+  const weighted = [];
+  pool.forEach(n => {
+    const weight = hot.includes(n) ? HOT_PB_WEIGHT : 1;
+    for (let i = 0; i < weight; i++) weighted.push(n);
+  });
+
+  const chosen = weighted[Math.floor(Math.random() * weighted.length)];
+  return { number: chosen, isHot: hot.includes(chosen) };
+}
+
+function renderBall(n, cls) {
+  return `<div class="ball ${cls || ""}">${n}</div>`;
+}
+
+function generateSets() {
+  const hotMain = parseNums(document.getElementById("hotMain").value);
+  const hotMainCount = Math.max(0, parseInt(document.getElementById("hotMainCount").value, 10) || 0);
+  const coldMain = parseNums(document.getElementById("coldMain").value);
+  const coldMainCount = Math.max(0, parseInt(document.getElementById("coldMainCount").value, 10) || 0);
+  const hotPB = parseNums(document.getElementById("hotPB").value);
+  const coldPB = parseNums(document.getElementById("coldPB").value);
+  const numSets = Math.min(5, Math.max(1, parseInt(document.getElementById("numSets").value, 10) || 1));
+
+  const resultsEl = document.getElementById("results");
+  resultsEl.innerHTML = "";
+
+  for (let s = 0; s < numSets; s++) {
+    const main = generateMain(hotMain, coldMain, hotMainCount, coldMainCount);
+    const pb = generatePowerball(hotPB, coldPB);
+
+    const ballsHtml = main.numbers
+      .map(n => renderBall(n, main.hotUsed.includes(n) ? "hot" : ""))
+      .join("") + renderBall(pb.number, "pb" + (pb.isHot ? " hot" : ""));
+
+    const div = document.createElement("div");
+    div.className = "set-card";
+    div.innerHTML = `<div class="set-label">조합 ${s + 1}</div><div class="balls">${ballsHtml}</div>`;
+    resultsEl.appendChild(div);
+  }
+}
+
+document.getElementById("saveBtn").addEventListener("click", saveConfig);
+document.getElementById("genBtn").addEventListener("click", () => {
+  saveConfig();
+  generateSets();
+});
+
+loadConfig();
+</script>
+</body>
+</html>
