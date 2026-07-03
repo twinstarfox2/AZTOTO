@@ -19,10 +19,17 @@
     padding-bottom:40px;
   }
   header{
-    padding:24px 20px 12px; text-align:center;
+    padding:24px 20px 12px; text-align:center; position:relative;
   }
   header h1{ font-size:20px; margin:0 0 4px; }
   header p{ margin:0; color:var(--muted); font-size:13px; }
+  .lang-switch{
+    display:flex; justify-content:center; margin-top:14px;
+  }
+  .lang-switch select{
+    background:#12162a; color:var(--text); border:1px solid #333a55;
+    border-radius:999px; padding:6px 14px; font-size:13px;
+  }
   .container{ max-width:480px; margin:0 auto; padding:0 16px; }
   .card{
     background:var(--card); border-radius:16px; padding:18px; margin-top:16px;
@@ -68,61 +75,62 @@
 <body>
 <div class="container">
   <header>
-    <h1>🎱 호주 파워볼 명예의 전당 번호 생성기</h1>
-    <p>Hot &amp; Cold 번호 기반 랜덤 조합 (7/35 + 파워볼 1/20)</p>
+    <h1 data-i18n="title">🎱 호주 파워볼 명예의 전당 번호 생성기</h1>
+    <p data-i18n="subtitle">Hot &amp; Cold 번호 기반 랜덤 조합 (7/35 + 파워볼 1/20)</p>
+    <div class="lang-switch">
+      <select id="langSelect">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+      </select>
+    </div>
   </header>
 
   <!-- 명예의 전당 설정 -->
   <div class="card">
-    <h2>⚙️ 명예의 전당 (Hot &amp; Cold) 설정</h2>
-    <p class="legend">
-      실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
-      아래에 직접 번호를 입력해두면 이 기기에 계속 저장됩니다.
-      최신 통계는 The Lott 공식 페이지에서 확인하세요:
-      <a href="https://www.thelott.com/real-winners/powerball/hot-cold-powerball-numbers" target="_blank">Hot &amp; Cold 페이지</a>
-    </p>
+    <h2 data-i18n="settingsTitle">⚙️ 명예의 전당 (Hot &amp; Cold) 설정</h2>
+    <p class="legend" data-i18n-html="settingsDesc"></p>
 
-    <label>메인 번호(1~35) 누적 상위 번호 목록 (순위 순으로 입력)</label>
-    <input type="text" id="hotMain" placeholder="예: 17, 32, 8, 25">
-    <label>↳ 그 중 매 조합에 항상 포함할 개수</label>
+    <label data-i18n="hotMainLabel">메인 번호(1~35) 누적 상위 번호 목록 (순위 순으로 입력)</label>
+    <input type="text" id="hotMain" data-i18n-placeholder="hotMainPlaceholder" placeholder="예: 17, 32, 8, 25">
+    <label data-i18n="hotMainCountLabel">↳ 그 중 매 조합에 항상 포함할 개수</label>
     <input type="number" id="hotMainCount" value="2" min="0" max="7">
 
-    <label>메인 번호(1~35) 누적 하위 번호 목록 (순위 순으로 입력)</label>
-    <input type="text" id="coldMain" placeholder="예: 34, 3, 9, 21, 28, 15">
-    <label>↳ 그 중 조합에서 항상 제외할 개수</label>
+    <label data-i18n="coldMainLabel">메인 번호(1~35) 누적 하위 번호 목록 (순위 순으로 입력)</label>
+    <input type="text" id="coldMain" data-i18n-placeholder="coldMainPlaceholder" placeholder="예: 34, 3, 9, 21, 28, 15">
+    <label data-i18n="coldMainCountLabel">↳ 그 중 조합에서 항상 제외할 개수</label>
     <input type="number" id="coldMainCount" value="5" min="0" max="30">
 
-    <label>파워볼(1~20) 누적 상위 번호 — 뽑힐 확률 가중치 ↑ (강제 포함은 아님)</label>
-    <input type="text" id="hotPB" placeholder="예: 2, 4">
+    <label data-i18n="hotPBLabel">파워볼(1~20) 누적 상위 번호 — 뽑힐 확률 가중치 ↑ (강제 포함은 아님)</label>
+    <input type="text" id="hotPB" data-i18n-placeholder="hotPBPlaceholder" placeholder="예: 2, 4">
 
-    <label>파워볼(1~20) 누적 하위 번호 — 후보에서 제외</label>
-    <input type="text" id="coldPB" placeholder="예: 14, 16">
+    <label data-i18n="coldPBLabel">파워볼(1~20) 누적 하위 번호 — 후보에서 제외</label>
+    <input type="text" id="coldPB" data-i18n-placeholder="coldPBPlaceholder" placeholder="예: 14, 16">
 
-    <button class="btn-secondary" id="saveBtn">저장</button>
+    <button class="btn-secondary" id="saveBtn" data-i18n="saveBtn">저장</button>
     <div class="save-msg" id="saveMsg"></div>
   </div>
 
   <!-- 생성 -->
   <div class="card">
-    <h2>🎲 번호 생성</h2>
-    <label>생성할 조합 개수</label>
+    <h2 data-i18n="genTitle">🎲 번호 생성</h2>
+    <label data-i18n="numSetsLabel">생성할 조합 개수</label>
     <input type="number" id="numSets" value="1" min="1" max="5">
-    <button class="btn-primary" id="genBtn">번호 생성하기</button>
+    <button class="btn-primary" id="genBtn" data-i18n="genBtn">번호 생성하기</button>
 
     <div class="legend">
-      <span class="dot" style="background:var(--accent)"></span> 명예의 전당(Hot) 번호
+      <span class="dot" style="background:var(--accent)"></span> <span data-i18n="legendHot">명예의 전당(Hot) 번호</span>
       &nbsp;&nbsp;
-      <span class="dot" style="background:#dfe3f0"></span> 랜덤 번호
+      <span class="dot" style="background:#dfe3f0"></span> <span data-i18n="legendRandom">랜덤 번호</span>
       &nbsp;&nbsp;
-      <span class="dot" style="background:var(--accent2)"></span> 파워볼
+      <span class="dot" style="background:var(--accent2)"></span> <span data-i18n="legendPB">파워볼</span>
     </div>
 
     <div id="results"></div>
   </div>
 
   <details class="card">
-    <summary>📱 아이폰에서 앱처럼 쓰는 방법 (App Store 설치 없이)</summary>
-    <p style="font-size:13px; color:var(--muted); line-height:1.6;">
+    <summary data-i18n="howToTitle">📱 아이폰에서 앱처럼 쓰는 방법 (App Store 설치 없이)</summary>
+    <p style="font-size:13px; color:var(--muted); line-height:1.6;" data-i18n-html="howToBody">
       1. 이 HTML 파일을 iCloud Drive(파일 앱)에 저장하거나, GitHub Pages 등에 올려 링크로 접속하세요.<br>
       2. Safari로 이 페이지를 여세요.<br>
       3. 하단 공유 버튼(⬆️) → <b>"홈 화면에 추가"</b> 를 누르면 앱 아이콘처럼 홈 화면에 생기고,
@@ -131,11 +139,11 @@
     </p>
   </details>
 
-  <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:20px;">
+  <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:20px;" data-i18n="disclaimer1">
     ⚠️ 복권은 매 회차 완전 독립적인 무작위 추첨입니다. Hot/Cold 번호를 사용해도 당첨 확률은 수학적으로
     동일합니다 — 이 도구는 재미를 위한 것입니다.
   </p>
-  <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:8px;">
+  <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:8px;" data-i18n="disclaimer2">
     본 페이지는 비공식 팬 제작 도구이며, The Lott / Tabcorp 및 Powerball 공식 운영사와 아무런 제휴
     관계가 없습니다. "Powerball"은 각 권리자의 상표입니다.
   </p>
@@ -146,6 +154,110 @@ const MAIN_RANGE = [1, 35];
 const MAIN_PICKS = 7;
 const PB_RANGE = [1, 20];
 const HOT_PB_WEIGHT = 3; // 파워볼 hot 번호 가중치 배수
+
+const I18N = {
+  ko: {
+    title: "🎱 호주 파워볼 명예의 전당 번호 생성기",
+    subtitle: "Hot &amp; Cold 번호 기반 랜덤 조합 (7/35 + 파워볼 1/20)",
+    settingsTitle: "⚙️ 명예의 전당 (Hot &amp; Cold) 설정",
+    settingsDesc: `실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
+      아래에 직접 번호를 입력해두면 이 기기에 계속 저장됩니다.
+      최신 통계는 The Lott 공식 페이지에서 확인하세요:
+      <a href="https://www.thelott.com/real-winners/powerball/hot-cold-powerball-numbers" target="_blank">Hot &amp; Cold 페이지</a>`,
+    hotMainLabel: "메인 번호(1~35) 누적 상위 번호 목록 (순위 순으로 입력)",
+    hotMainPlaceholder: "예: 17, 32, 8, 25",
+    hotMainCountLabel: "↳ 그 중 매 조합에 항상 포함할 개수",
+    coldMainLabel: "메인 번호(1~35) 누적 하위 번호 목록 (순위 순으로 입력)",
+    coldMainPlaceholder: "예: 34, 3, 9, 21, 28, 15",
+    coldMainCountLabel: "↳ 그 중 조합에서 항상 제외할 개수",
+    hotPBLabel: "파워볼(1~20) 누적 상위 번호 — 뽑힐 확률 가중치 ↑ (강제 포함은 아님)",
+    hotPBPlaceholder: "예: 2, 4",
+    coldPBLabel: "파워볼(1~20) 누적 하위 번호 — 후보에서 제외",
+    coldPBPlaceholder: "예: 14, 16",
+    saveBtn: "저장",
+    saveMsg: "저장되었습니다 ✔",
+    genTitle: "🎲 번호 생성",
+    numSetsLabel: "생성할 조합 개수",
+    genBtn: "번호 생성하기",
+    legendHot: "명예의 전당(Hot) 번호",
+    legendRandom: "랜덤 번호",
+    legendPB: "파워볼",
+    setLabel: "조합",
+    howToTitle: "📱 아이폰에서 앱처럼 쓰는 방법 (App Store 설치 없이)",
+    howToBody: `1. 이 HTML 파일을 iCloud Drive(파일 앱)에 저장하거나, GitHub Pages 등에 올려 링크로 접속하세요.<br>
+      2. Safari로 이 페이지를 여세요.<br>
+      3. 하단 공유 버튼(⬆️) → <b>"홈 화면에 추가"</b> 를 누르면 앱 아이콘처럼 홈 화면에 생기고,
+      이후에는 아이콘을 눌러 앱처럼 실행할 수 있습니다. (App Store 설치가 아니라 웹페이지 바로가기입니다.)<br>
+      4. 인터넷 연결 없이도 번호 생성 자체는 동작합니다 (설정값은 이 기기에 저장되어 있으므로).`,
+    disclaimer1: "⚠️ 복권은 매 회차 완전 독립적인 무작위 추첨입니다. Hot/Cold 번호를 사용해도 당첨 확률은 수학적으로 동일합니다 — 이 도구는 재미를 위한 것입니다.",
+    disclaimer2: `본 페이지는 비공식 팬 제작 도구이며, The Lott / Tabcorp 및 Powerball 공식 운영사와 아무런 제휴 관계가 없습니다. "Powerball"은 각 권리자의 상표입니다.`,
+    htmlLang: "ko",
+    pageTitle: "호주 파워볼 명예의 전당 번호 생성기",
+  },
+  en: {
+    title: "🎱 Australian Powerball Hall of Fame Generator",
+    subtitle: "Random combinations based on Hot &amp; Cold numbers (7/35 + Powerball 1/20)",
+    settingsTitle: "⚙️ Hall of Fame (Hot &amp; Cold) Settings",
+    settingsDesc: `Live automatic collection isn't reliably possible from iPhone Safari (blocked access / login required),
+      so enter your numbers below and they'll stay saved on this device.
+      Check the latest stats on The Lott's official page:
+      <a href="https://www.thelott.com/real-winners/powerball/hot-cold-powerball-numbers" target="_blank">Hot &amp; Cold page</a>`,
+    hotMainLabel: "Main numbers (1–35), top cumulative list (enter in rank order)",
+    hotMainPlaceholder: "e.g. 17, 32, 8, 25",
+    hotMainCountLabel: "↳ How many of these to always include in each set",
+    coldMainLabel: "Main numbers (1–35), bottom cumulative list (enter in rank order)",
+    coldMainPlaceholder: "e.g. 34, 3, 9, 21, 28, 15",
+    coldMainCountLabel: "↳ How many of these to always exclude from each set",
+    hotPBLabel: "Powerball (1–20), top cumulative numbers — higher pick weight (not forced)",
+    hotPBPlaceholder: "e.g. 2, 4",
+    coldPBLabel: "Powerball (1–20), bottom cumulative numbers — excluded from picks",
+    coldPBPlaceholder: "e.g. 14, 16",
+    saveBtn: "Save",
+    saveMsg: "Saved ✔",
+    genTitle: "🎲 Generate Numbers",
+    numSetsLabel: "Number of sets to generate",
+    genBtn: "Generate Numbers",
+    legendHot: "Hall of Fame (Hot) number",
+    legendRandom: "Random number",
+    legendPB: "Powerball",
+    setLabel: "Set",
+    howToTitle: "📱 Use it like an app on iPhone (no App Store install)",
+    howToBody: `1. Save this HTML file to iCloud Drive (Files app), or host it on GitHub Pages and open the link.<br>
+      2. Open this page in Safari.<br>
+      3. Tap the Share button (⬆️) → <b>"Add to Home Screen"</b> and an app-like icon appears on your Home Screen —
+      tap it any time to launch it like an app. (This is a web shortcut, not an App Store install.)<br>
+      4. Number generation still works without an internet connection (your settings are stored on this device).`,
+    disclaimer1: "⚠️ Every lottery draw is a completely independent random event. Using Hot/Cold numbers does not change the mathematical odds of winning — this tool is for fun only.",
+    disclaimer2: `This page is an unofficial fan-made tool and has no affiliation with The Lott / Tabcorp or the official Powerball operators. "Powerball" is a trademark of its respective owner.`,
+    htmlLang: "en",
+    pageTitle: "Australian Powerball Hall of Fame Number Generator",
+  },
+};
+
+let currentLang = localStorage.getItem("pbLang") || "ko";
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  const dict = I18N[lang];
+  document.documentElement.lang = dict.htmlLang;
+  document.title = dict.pageTitle;
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (dict[key] !== undefined) el.innerHTML = dict[key];
+  });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => {
+    const key = el.getAttribute("data-i18n-html");
+    if (dict[key] !== undefined) el.innerHTML = dict[key];
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    const key = el.getAttribute("data-i18n-placeholder");
+    if (dict[key] !== undefined) el.placeholder = dict[key];
+  });
+
+  document.getElementById("langSelect").value = lang;
+  localStorage.setItem("pbLang", lang);
+}
 
 function parseNums(str) {
   return (str || "")
@@ -175,7 +287,7 @@ function saveConfig() {
   };
   localStorage.setItem("pbHallOfFame", JSON.stringify(cfg));
   const msg = document.getElementById("saveMsg");
-  msg.textContent = "저장되었습니다 ✔";
+  msg.textContent = I18N[currentLang].saveMsg;
   setTimeout(() => (msg.textContent = ""), 2000);
 }
 
@@ -263,7 +375,7 @@ function generateSets() {
 
     const div = document.createElement("div");
     div.className = "set-card";
-    div.innerHTML = `<div class="set-label">조합 ${s + 1}</div><div class="balls">${ballsHtml}</div>`;
+    div.innerHTML = `<div class="set-label">${I18N[currentLang].setLabel} ${s + 1}</div><div class="balls">${ballsHtml}</div>`;
     resultsEl.appendChild(div);
   }
 }
@@ -273,7 +385,9 @@ document.getElementById("genBtn").addEventListener("click", () => {
   saveConfig();
   generateSets();
 });
+document.getElementById("langSelect").addEventListener("change", (e) => applyLanguage(e.target.value));
 
+applyLanguage(currentLang);
 loadConfig();
 </script>
 </body>
