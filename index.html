@@ -88,7 +88,13 @@
   <!-- 명예의 전당 설정 -->
   <div class="card">
     <h2 data-i18n="settingsTitle">⚙️ 명예의 전당 (Hot &amp; Cold) 설정</h2>
-    <p class="legend" data-i18n-html="settingsDesc"></p>
+    <p class="legend" data-i18n-html="settingsDesc">
+      아래 기본값은 Lottolyzer(en.lottolyzer.com) 누적 통계(7/35 방식 도입 이후 약 690회차 이상 기준)로
+      미리 채워져 있습니다. 실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
+      직접 값을 수정하면 이 기기에 계속 저장됩니다.
+      최신 통계는 The Lott 공식 페이지에서 확인하세요:
+      <a href="https://www.thelott.com/real-winners/powerball/hot-cold-powerball-numbers" target="_blank">Hot &amp; Cold 페이지</a>
+    </p>
 
     <label data-i18n="hotMainLabel">메인 번호(1~35) 누적 상위 번호 목록 (순위 순으로 입력)</label>
     <input type="text" id="hotMain" data-i18n-placeholder="hotMainPlaceholder" placeholder="예: 17, 32, 8, 25">
@@ -160,8 +166,9 @@ const I18N = {
     title: "🎱 호주 파워볼 명예의 전당 번호 생성기",
     subtitle: "Hot &amp; Cold 번호 기반 랜덤 조합 (7/35 + 파워볼 1/20)",
     settingsTitle: "⚙️ 명예의 전당 (Hot &amp; Cold) 설정",
-    settingsDesc: `실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
-      아래에 직접 번호를 입력해두면 이 기기에 계속 저장됩니다.
+    settingsDesc: `아래 기본값은 Lottolyzer(en.lottolyzer.com) 누적 통계(7/35 방식 도입 이후 약 690회차 이상 기준)로
+      미리 채워져 있습니다. 실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
+      직접 값을 수정하면 이 기기에 계속 저장됩니다.
       최신 통계는 The Lott 공식 페이지에서 확인하세요:
       <a href="https://www.thelott.com/real-winners/powerball/hot-cold-powerball-numbers" target="_blank">Hot &amp; Cold 페이지</a>`,
     hotMainLabel: "메인 번호(1~35) 누적 상위 번호 목록 (순위 순으로 입력)",
@@ -198,9 +205,10 @@ const I18N = {
     title: "🎱 Australian Powerball Hall of Fame Generator",
     subtitle: "Random combinations based on Hot &amp; Cold numbers (7/35 + Powerball 1/20)",
     settingsTitle: "⚙️ Hall of Fame (Hot &amp; Cold) Settings",
-    settingsDesc: `Live automatic collection isn't reliably possible from iPhone Safari (blocked access / login required),
-      so enter your numbers below and they'll stay saved on this device.
-      Check the latest stats on The Lott's official page:
+    settingsDesc: `The defaults below are pre-filled from Lottolyzer (en.lottolyzer.com) cumulative stats
+      (based on 690+ draws since the current 7/35 format began). Live automatic collection isn't reliably
+      possible from iPhone Safari (blocked access / login required), so any edits you make are saved on
+      this device. Check the latest stats on The Lott's official page:
       <a href="https://www.thelott.com/real-winners/powerball/hot-cold-powerball-numbers" target="_blank">Hot &amp; Cold page</a>`,
     hotMainLabel: "Main numbers (1–35), top cumulative list (enter in rank order)",
     hotMainPlaceholder: "e.g. 17, 32, 8, 25",
@@ -266,14 +274,20 @@ function parseNums(str) {
     .filter(n => !isNaN(n));
 }
 
+// Lottolyzer(en.lottolyzer.com) 누적 통계 기준 초기값 — 약 690회차 이상, 7/35 방식 도입 이후 전체
+const DEFAULT_HOT_MAIN = "32, 23";
+const DEFAULT_COLD_MAIN = "1, 33, 28, 31, 21";
+const DEFAULT_HOT_PB = "2, 10, 18";
+const DEFAULT_COLD_PB = "14, 16, 1";
+
 function loadConfig() {
   const cfg = JSON.parse(localStorage.getItem("pbHallOfFame") || "{}");
-  document.getElementById("hotMain").value = cfg.hotMain || "";
+  document.getElementById("hotMain").value = cfg.hotMain || DEFAULT_HOT_MAIN;
   document.getElementById("hotMainCount").value = cfg.hotMainCount ?? 2;
-  document.getElementById("coldMain").value = cfg.coldMain || "";
+  document.getElementById("coldMain").value = cfg.coldMain || DEFAULT_COLD_MAIN;
   document.getElementById("coldMainCount").value = cfg.coldMainCount ?? 5;
-  document.getElementById("hotPB").value = cfg.hotPB || "";
-  document.getElementById("coldPB").value = cfg.coldPB || "";
+  document.getElementById("hotPB").value = cfg.hotPB || DEFAULT_HOT_PB;
+  document.getElementById("coldPB").value = cfg.coldPB || DEFAULT_COLD_PB;
 }
 
 function saveConfig() {
