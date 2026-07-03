@@ -99,7 +99,7 @@
     <label data-i18n="hotMainLabel">메인 번호(1~35) 누적 상위 번호 목록 (순위 순으로 입력)</label>
     <input type="text" id="hotMain" data-i18n-placeholder="hotMainPlaceholder" placeholder="예: 17, 32, 8, 25">
     <label data-i18n="hotMainCountLabel">↳ 그 중 매 조합에 항상 포함할 개수</label>
-    <input type="number" id="hotMainCount" value="2" min="0" max="7">
+    <input type="number" id="hotMainCount" value="3" min="0" max="7">
 
     <label data-i18n="coldMainLabel">메인 번호(1~35) 누적 하위 번호 목록 (순위 순으로 입력)</label>
     <input type="text" id="coldMain" data-i18n-placeholder="coldMainPlaceholder" placeholder="예: 34, 3, 9, 21, 28, 15">
@@ -283,7 +283,7 @@ const DEFAULT_COLD_PB = "14, 16, 1";
 function loadConfig() {
   const cfg = JSON.parse(localStorage.getItem("pbHallOfFame") || "{}");
   document.getElementById("hotMain").value = cfg.hotMain || DEFAULT_HOT_MAIN;
-  document.getElementById("hotMainCount").value = cfg.hotMainCount ?? 2;
+  document.getElementById("hotMainCount").value = cfg.hotMainCount ?? 3;
   document.getElementById("coldMain").value = cfg.coldMain || DEFAULT_COLD_MAIN;
   document.getElementById("coldMainCount").value = cfg.coldMainCount ?? 5;
   document.getElementById("hotPB").value = cfg.hotPB || DEFAULT_HOT_PB;
