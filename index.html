@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="파워볼 명예의전당">
-<title>호주 파워볼 명예의 전당 번호 생성기</title>
+<meta name="apple-mobile-web-app-title" content="복권 명예의전당">
+<title>호주 복권 명예의 전당 번호 생성기</title>
 <style>
   :root{
     --bg:#0f1220; --card:#1b1f33; --accent:#ffb400; --accent2:#ff5c5c;
@@ -31,6 +31,15 @@
     border-radius:999px; padding:6px 14px; font-size:13px;
   }
   .container{ max-width:480px; margin:0 auto; padding:0 16px; }
+  .tabs{
+    display:flex; gap:8px; margin-top:16px;
+  }
+  .tab-btn{
+    flex:1; padding:10px; border-radius:10px; border:1px solid #333a55;
+    background:#12162a; color:var(--muted); font-size:14px; font-weight:700;
+    cursor:pointer;
+  }
+  .tab-btn.active{ background:var(--accent); color:#1a1200; border-color:var(--accent); }
   .card{
     background:var(--card); border-radius:16px; padding:18px; margin-top:16px;
     box-shadow:0 4px 14px rgba(0,0,0,.25);
@@ -80,8 +89,8 @@
 <body>
 <div class="container">
   <header>
-    <h1 data-i18n="title">🎱 호주 파워볼 명예의 전당 번호 생성기</h1>
-    <p data-i18n="subtitle">Hot &amp; Cold 번호 기반 랜덤 조합 (7/35 + 파워볼 1/20)</p>
+    <h1 data-i18n="title">🎱 호주 복권 명예의 전당 번호 생성기</h1>
+    <p data-i18n="subtitle">Hot &amp; Cold 번호 기반 랜덤 조합 — 파워볼 · OZ 로또</p>
     <div class="lang-switch">
       <select id="langSelect">
         <option value="ko">한국어</option>
@@ -90,70 +99,140 @@
     </div>
   </header>
 
-  <!-- 명예의 전당 설정 -->
-  <div class="card">
-    <h2 data-i18n="settingsTitle">⚙️ 명예의 전당 (Hot &amp; Cold) 설정</h2>
-    <p class="legend" data-i18n-html="settingsDesc">
-      아래 기본값은 Lottolyzer(en.lottolyzer.com) 누적 통계(7/35 방식 도입 이후 약 690회차 이상 기준)로
-      미리 채워져 있습니다. 실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
-      직접 값을 수정하면 이 기기에 계속 저장됩니다.
-      최신 통계는 The Lott 공식 페이지에서 확인하세요:
-      <a href="https://www.thelott.com/real-winners/powerball/hot-cold-powerball-numbers" target="_blank">Hot &amp; Cold 페이지</a>
-    </p>
-
-    <label data-i18n="hotMainLabel">메인 번호(1~35) 누적 상위 번호 목록 (순위 순으로 입력)</label>
-    <input type="text" id="hotMain" data-i18n-placeholder="hotMainPlaceholder" placeholder="예: 17, 32, 8, 25">
-    <label data-i18n="hotMainCountLabel">↳ 그 중 매 조합에 항상 포함할 개수</label>
-    <input type="number" id="hotMainCount" value="3" min="0" max="7">
-
-    <label data-i18n="coldMainLabel">메인 번호(1~35) 누적 하위 번호 목록 (순위 순으로 입력)</label>
-    <input type="text" id="coldMain" data-i18n-placeholder="coldMainPlaceholder" placeholder="예: 34, 3, 9, 21, 28, 15">
-    <label data-i18n="coldMainCountLabel">↳ 그 중 조합에서 항상 제외할 개수</label>
-    <input type="number" id="coldMainCount" value="5" min="0" max="30">
-
-    <label data-i18n="hotPBLabel">파워볼(1~20) 누적 상위 번호 — 뽑힐 확률 가중치 ↑ (강제 포함은 아님)</label>
-    <input type="text" id="hotPB" data-i18n-placeholder="hotPBPlaceholder" placeholder="예: 2, 4">
-
-    <label data-i18n="coldPBLabel">파워볼(1~20) 누적 하위 번호 — 후보에서 제외</label>
-    <input type="text" id="coldPB" data-i18n-placeholder="coldPBPlaceholder" placeholder="예: 14, 16">
-
-    <button class="btn-secondary" id="saveBtn" data-i18n="saveBtn">저장</button>
-    <div class="save-msg" id="saveMsg"></div>
+  <div class="tabs">
+    <button class="tab-btn" id="tabBtnPowerball" data-tab="powerball" data-i18n="tabPowerball">파워볼</button>
+    <button class="tab-btn" id="tabBtnOzlotto" data-tab="ozlotto" data-i18n="tabOzLotto">OZ 로또</button>
   </div>
 
-  <!-- 생성 -->
-  <div class="card">
-    <h2 data-i18n="genTitle">🎲 번호 생성</h2>
-    <label data-i18n="numSetsLabel">생성할 조합 개수</label>
-    <select id="numSets">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="4" selected>4</option>
-      <option value="6">6</option>
-      <option value="8">8</option>
-      <option value="10">10</option>
-      <option value="12">12</option>
-      <option value="20">20</option>
-      <option value="25">25</option>
-      <option value="30">30</option>
-      <option value="40">40</option>
-      <option value="50">50</option>
-    </select>
-    <label class="checkbox-row">
-      <input type="checkbox" id="avoidPopular">
-      <span data-i18n="avoidPopularLabel">비인기 번호 위주로 섞기 (당첨 확률은 동일, 당첨 시 혼자 가져갈 가능성만 높임)</span>
-    </label>
-    <button class="btn-primary" id="genBtn" data-i18n="genBtn">번호 생성하기</button>
+  <!-- ================= 파워볼 패널 ================= -->
+  <div id="panel-powerball" class="game-panel">
+    <!-- 명예의 전당 설정 -->
+    <div class="card">
+      <h2 data-i18n="settingsTitle">⚙️ 명예의 전당 (Hot &amp; Cold) 설정</h2>
+      <p class="legend" data-i18n-html="settingsDesc">
+        아래 기본값은 Lottolyzer(en.lottolyzer.com) 누적 통계(7/35 방식 도입 이후 약 690회차 이상 기준)로
+        미리 채워져 있습니다. 실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
+        직접 값을 수정하면 이 기기에 계속 저장됩니다.
+        최신 통계는 The Lott 공식 페이지에서 확인하세요:
+        <a href="https://www.thelott.com/real-winners/powerball/hot-cold-powerball-numbers" target="_blank">Hot &amp; Cold 페이지</a>
+      </p>
 
-    <div class="legend">
-      <span class="dot" style="background:var(--accent)"></span> <span data-i18n="legendHot">명예의 전당(Hot) 번호</span>
-      &nbsp;&nbsp;
-      <span class="dot" style="background:#dfe3f0"></span> <span data-i18n="legendRandom">랜덤 번호</span>
-      &nbsp;&nbsp;
-      <span class="dot" style="background:var(--accent2)"></span> <span data-i18n="legendPB">파워볼</span>
+      <label data-i18n="hotMainLabel">메인 번호(1~35) 누적 상위 번호 목록 (순위 순으로 입력)</label>
+      <input type="text" id="hotMain" data-i18n-placeholder="hotMainPlaceholder" placeholder="예: 17, 32, 8, 25">
+      <label data-i18n="hotMainCountLabel">↳ 그 중 매 조합에 항상 포함할 개수</label>
+      <input type="number" id="hotMainCount" value="3" min="0" max="7">
+
+      <label data-i18n="coldMainLabel">메인 번호(1~35) 누적 하위 번호 목록 (순위 순으로 입력)</label>
+      <input type="text" id="coldMain" data-i18n-placeholder="coldMainPlaceholder" placeholder="예: 34, 3, 9, 21, 28, 15">
+      <label data-i18n="coldMainCountLabel">↳ 그 중 조합에서 항상 제외할 개수</label>
+      <input type="number" id="coldMainCount" value="5" min="0" max="30">
+
+      <label data-i18n="hotPBLabel">파워볼(1~20) 누적 상위 번호 — 뽑힐 확률 가중치 ↑ (강제 포함은 아님)</label>
+      <input type="text" id="hotPB" data-i18n-placeholder="hotPBPlaceholder" placeholder="예: 2, 4">
+
+      <label data-i18n="coldPBLabel">파워볼(1~20) 누적 하위 번호 — 후보에서 제외</label>
+      <input type="text" id="coldPB" data-i18n-placeholder="coldPBPlaceholder" placeholder="예: 14, 16">
+
+      <button class="btn-secondary" id="saveBtn" data-i18n="saveBtn">저장</button>
+      <div class="save-msg" id="saveMsg"></div>
     </div>
 
-    <div id="results"></div>
+    <!-- 생성 -->
+    <div class="card">
+      <h2 data-i18n="genTitle">🎲 번호 생성</h2>
+      <label data-i18n="numSetsLabel">생성할 조합 개수</label>
+      <select id="numSets">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="4" selected>4</option>
+        <option value="6">6</option>
+        <option value="8">8</option>
+        <option value="10">10</option>
+        <option value="12">12</option>
+        <option value="20">20</option>
+        <option value="25">25</option>
+        <option value="30">30</option>
+        <option value="40">40</option>
+        <option value="50">50</option>
+      </select>
+      <label class="checkbox-row">
+        <input type="checkbox" id="avoidPopular">
+        <span data-i18n="avoidPopularLabel">비인기 번호 위주로 섞기 (당첨 확률은 동일, 당첨 시 혼자 가져갈 가능성만 높임)</span>
+      </label>
+      <button class="btn-primary" id="genBtn" data-i18n="genBtn">번호 생성하기</button>
+
+      <div class="legend">
+        <span class="dot" style="background:var(--accent)"></span> <span data-i18n="legendHot">명예의 전당(Hot) 번호</span>
+        &nbsp;&nbsp;
+        <span class="dot" style="background:#dfe3f0"></span> <span data-i18n="legendRandom">랜덤 번호</span>
+        &nbsp;&nbsp;
+        <span class="dot" style="background:var(--accent2)"></span> <span data-i18n="legendPB">파워볼</span>
+      </div>
+
+      <div id="results"></div>
+    </div>
+  </div>
+
+  <!-- ================= OZ 로또 패널 ================= -->
+  <div id="panel-ozlotto" class="game-panel" hidden>
+    <!-- 명예의 전당 설정 -->
+    <div class="card">
+      <h2 data-i18n="settingsTitle">⚙️ 명예의 전당 (Hot &amp; Cold) 설정</h2>
+      <p class="legend" data-i18n-html="ozSettingsDesc">
+        아래 기본값은 Lottolyzer(en.lottolyzer.com) 누적 통계(7/47 방식, 약 966회차 이상 기준)로
+        미리 채워져 있습니다 (46·47번은 번호 범위 확대로 최근에 추가돼 통계가 적어 하위 목록에서 제외했습니다).
+        실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
+        직접 값을 수정하면 이 기기에 계속 저장됩니다.
+        최신 통계는 The Lott 공식 페이지에서 확인하세요:
+        <a href="https://www.thelott.com/real-winners/oz-lotto/revealing-ozlottos-hot-and-cold-numbers" target="_blank">Hot &amp; Cold 페이지</a>
+      </p>
+
+      <label data-i18n="ozHotMainLabel">메인 번호(1~47) 누적 상위 번호 목록 (순위 순으로 입력)</label>
+      <input type="text" id="ozHotMain" data-i18n-placeholder="ozHotMainPlaceholder" placeholder="예: 7, 21, 28, 5">
+      <label data-i18n="hotMainCountLabel">↳ 그 중 매 조합에 항상 포함할 개수</label>
+      <input type="number" id="ozHotMainCount" value="3" min="0" max="7">
+
+      <label data-i18n="ozColdMainLabel">메인 번호(1~47) 누적 하위 번호 목록 (순위 순으로 입력)</label>
+      <input type="text" id="ozColdMain" data-i18n-placeholder="ozColdMainPlaceholder" placeholder="예: 10, 11, 38, 8">
+      <label data-i18n="coldMainCountLabel">↳ 그 중 조합에서 항상 제외할 개수</label>
+      <input type="number" id="ozColdMainCount" value="5" min="0" max="40">
+
+      <button class="btn-secondary" id="ozSaveBtn" data-i18n="saveBtn">저장</button>
+      <div class="save-msg" id="ozSaveMsg"></div>
+    </div>
+
+    <!-- 생성 -->
+    <div class="card">
+      <h2 data-i18n="genTitle">🎲 번호 생성</h2>
+      <label data-i18n="numSetsLabel">생성할 조합 개수</label>
+      <select id="ozNumSets">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="4" selected>4</option>
+        <option value="6">6</option>
+        <option value="8">8</option>
+        <option value="10">10</option>
+        <option value="12">12</option>
+        <option value="20">20</option>
+        <option value="25">25</option>
+        <option value="30">30</option>
+        <option value="40">40</option>
+        <option value="50">50</option>
+      </select>
+      <label class="checkbox-row">
+        <input type="checkbox" id="ozAvoidPopular">
+        <span data-i18n="avoidPopularLabel">비인기 번호 위주로 섞기 (당첨 확률은 동일, 당첨 시 혼자 가져갈 가능성만 높임)</span>
+      </label>
+      <button class="btn-primary" id="ozGenBtn" data-i18n="genBtn">번호 생성하기</button>
+
+      <div class="legend">
+        <span class="dot" style="background:var(--accent)"></span> <span data-i18n="legendHot">명예의 전당(Hot) 번호</span>
+        &nbsp;&nbsp;
+        <span class="dot" style="background:#dfe3f0"></span> <span data-i18n="legendRandom">랜덤 번호</span>
+      </div>
+
+      <div id="ozResults"></div>
+    </div>
   </div>
 
   <details class="card">
@@ -172,8 +251,8 @@
     동일합니다 — 이 도구는 재미를 위한 것입니다.
   </p>
   <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:8px;" data-i18n="disclaimer2">
-    본 페이지는 비공식 팬 제작 도구이며, The Lott / Tabcorp 및 Powerball 공식 운영사와 아무런 제휴
-    관계가 없습니다. "Powerball"은 각 권리자의 상표입니다.
+    본 페이지는 비공식 팬 제작 도구이며, The Lott / Tabcorp 및 각 복권 게임 공식 운영사와 아무런 제휴
+    관계가 없습니다. "Powerball", "Oz Lotto"는 각 권리자의 상표입니다.
   </p>
 </div>
 
@@ -183,10 +262,15 @@ const MAIN_PICKS = 7;
 const PB_RANGE = [1, 20];
 const HOT_PB_WEIGHT = 3; // 파워볼 hot 번호 가중치 배수
 
+const OZ_RANGE = [1, 47];
+const OZ_PICKS = 7;
+
 const I18N = {
   ko: {
-    title: "🎱 호주 파워볼 명예의 전당 번호 생성기",
-    subtitle: "Hot &amp; Cold 번호 기반 랜덤 조합 (7/35 + 파워볼 1/20)",
+    title: "🎱 호주 복권 명예의 전당 번호 생성기",
+    subtitle: "Hot &amp; Cold 번호 기반 랜덤 조합 — 파워볼 · OZ 로또",
+    tabPowerball: "파워볼",
+    tabOzLotto: "OZ 로또",
     settingsTitle: "⚙️ 명예의 전당 (Hot &amp; Cold) 설정",
     settingsDesc: `아래 기본값은 Lottolyzer(en.lottolyzer.com) 누적 통계(7/35 방식 도입 이후 약 690회차 이상 기준)로
       미리 채워져 있습니다. 실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
@@ -203,6 +287,16 @@ const I18N = {
     hotPBPlaceholder: "예: 2, 4",
     coldPBLabel: "파워볼(1~20) 누적 하위 번호 — 후보에서 제외",
     coldPBPlaceholder: "예: 14, 16",
+    ozSettingsDesc: `아래 기본값은 Lottolyzer(en.lottolyzer.com) 누적 통계(7/47 방식, 약 966회차 이상 기준)로
+      미리 채워져 있습니다 (46·47번은 번호 범위 확대로 최근에 추가돼 통계가 적어 하위 목록에서 제외했습니다).
+      실시간 자동 수집은 아이폰 Safari 환경에서는 안정적으로 불가능해서(접근 차단/로그인 필요),
+      직접 값을 수정하면 이 기기에 계속 저장됩니다.
+      최신 통계는 The Lott 공식 페이지에서 확인하세요:
+      <a href="https://www.thelott.com/real-winners/oz-lotto/revealing-ozlottos-hot-and-cold-numbers" target="_blank">Hot &amp; Cold 페이지</a>`,
+    ozHotMainLabel: "메인 번호(1~47) 누적 상위 번호 목록 (순위 순으로 입력)",
+    ozHotMainPlaceholder: "예: 7, 21, 28, 5",
+    ozColdMainLabel: "메인 번호(1~47) 누적 하위 번호 목록 (순위 순으로 입력)",
+    ozColdMainPlaceholder: "예: 10, 11, 38, 8",
     saveBtn: "저장",
     saveMsg: "저장되었습니다 ✔",
     genTitle: "🎲 번호 생성",
@@ -220,13 +314,15 @@ const I18N = {
       이후에는 아이콘을 눌러 앱처럼 실행할 수 있습니다. (App Store 설치가 아니라 웹페이지 바로가기입니다.)<br>
       4. 인터넷 연결 없이도 번호 생성 자체는 동작합니다 (설정값은 이 기기에 저장되어 있으므로).`,
     disclaimer1: "⚠️ 복권은 매 회차 완전 독립적인 무작위 추첨입니다. Hot/Cold 번호를 사용해도 당첨 확률은 수학적으로 동일합니다 — 이 도구는 재미를 위한 것입니다.",
-    disclaimer2: `본 페이지는 비공식 팬 제작 도구이며, The Lott / Tabcorp 및 Powerball 공식 운영사와 아무런 제휴 관계가 없습니다. "Powerball"은 각 권리자의 상표입니다.`,
+    disclaimer2: `본 페이지는 비공식 팬 제작 도구이며, The Lott / Tabcorp 및 각 복권 게임 공식 운영사와 아무런 제휴 관계가 없습니다. "Powerball", "Oz Lotto"는 각 권리자의 상표입니다.`,
     htmlLang: "ko",
-    pageTitle: "호주 파워볼 명예의 전당 번호 생성기",
+    pageTitle: "호주 복권 명예의 전당 번호 생성기",
   },
   en: {
-    title: "🎱 Australian Powerball Hall of Fame Generator",
-    subtitle: "Random combinations based on Hot &amp; Cold numbers (7/35 + Powerball 1/20)",
+    title: "🎱 Australian Lottery Hall of Fame Generator",
+    subtitle: "Random combinations based on Hot &amp; Cold numbers — Powerball · Oz Lotto",
+    tabPowerball: "Powerball",
+    tabOzLotto: "Oz Lotto",
     settingsTitle: "⚙️ Hall of Fame (Hot &amp; Cold) Settings",
     settingsDesc: `The defaults below are pre-filled from Lottolyzer (en.lottolyzer.com) cumulative stats
       (based on 690+ draws since the current 7/35 format began). Live automatic collection isn't reliably
@@ -243,6 +339,16 @@ const I18N = {
     hotPBPlaceholder: "e.g. 2, 4",
     coldPBLabel: "Powerball (1–20), bottom cumulative numbers — excluded from picks",
     coldPBPlaceholder: "e.g. 14, 16",
+    ozSettingsDesc: `The defaults below are pre-filled from Lottolyzer (en.lottolyzer.com) cumulative stats
+      (7/47 format, based on 966+ draws). Numbers 46 and 47 were excluded from the bottom list since they
+      were added recently when the number range expanded, so they naturally have fewer draws on record.
+      Live automatic collection isn't reliably possible from iPhone Safari (blocked access / login required),
+      so any edits you make are saved on this device. Check the latest stats on The Lott's official page:
+      <a href="https://www.thelott.com/real-winners/oz-lotto/revealing-ozlottos-hot-and-cold-numbers" target="_blank">Hot &amp; Cold page</a>`,
+    ozHotMainLabel: "Main numbers (1–47), top cumulative list (enter in rank order)",
+    ozHotMainPlaceholder: "e.g. 7, 21, 28, 5",
+    ozColdMainLabel: "Main numbers (1–47), bottom cumulative list (enter in rank order)",
+    ozColdMainPlaceholder: "e.g. 10, 11, 38, 8",
     saveBtn: "Save",
     saveMsg: "Saved ✔",
     genTitle: "🎲 Generate Numbers",
@@ -260,9 +366,9 @@ const I18N = {
       tap it any time to launch it like an app. (This is a web shortcut, not an App Store install.)<br>
       4. Number generation still works without an internet connection (your settings are stored on this device).`,
     disclaimer1: "⚠️ Every lottery draw is a completely independent random event. Using Hot/Cold numbers does not change the mathematical odds of winning — this tool is for fun only.",
-    disclaimer2: `This page is an unofficial fan-made tool and has no affiliation with The Lott / Tabcorp or the official Powerball operators. "Powerball" is a trademark of its respective owner.`,
+    disclaimer2: `This page is an unofficial fan-made tool and has no affiliation with The Lott / Tabcorp or any official lottery operator. "Powerball" and "Oz Lotto" are trademarks of their respective owners.`,
     htmlLang: "en",
-    pageTitle: "Australian Powerball Hall of Fame Number Generator",
+    pageTitle: "Australian Lottery Hall of Fame Number Generator",
   },
 };
 
@@ -298,11 +404,14 @@ function parseNums(str) {
     .filter(n => !isNaN(n));
 }
 
-// Lottolyzer(en.lottolyzer.com) 누적 통계 기준 초기값 — 약 690회차 이상, 7/35 방식 도입 이후 전체
-const DEFAULT_HOT_MAIN = "32, 23, 9, 17, 7, 19, 20, 25, 4, 6";
+// Lottolyzer(en.lottolyzer.com) 누적 통계 기준 초기값
+const DEFAULT_HOT_MAIN = "32, 23, 9, 17, 7, 19, 20, 25, 4, 6"; // 파워볼 7/35, 약 690회차 이상
 const DEFAULT_COLD_MAIN = "1, 28, 33, 21, 31, 2, 13, 15, 27, 29";
 const DEFAULT_HOT_PB = "2, 10, 18";
 const DEFAULT_COLD_PB = "14, 16, 1";
+
+const DEFAULT_OZ_HOT_MAIN = "7, 21, 28, 5, 17, 27, 33, 22, 37, 45"; // OZ 로또 7/47, 약 966회차 이상
+const DEFAULT_OZ_COLD_MAIN = "10, 11, 38, 8, 42, 23, 18, 24, 40, 41"; // 46, 47은 최근 추가 번호라 제외
 
 function loadConfig() {
   const cfg = JSON.parse(localStorage.getItem("pbHallOfFame") || "{}");
@@ -331,6 +440,29 @@ function saveConfig() {
   setTimeout(() => (msg.textContent = ""), 2000);
 }
 
+function loadOzConfig() {
+  const cfg = JSON.parse(localStorage.getItem("ozHallOfFame") || "{}");
+  document.getElementById("ozHotMain").value = cfg.hotMain || DEFAULT_OZ_HOT_MAIN;
+  document.getElementById("ozHotMainCount").value = cfg.hotMainCount ?? 3;
+  document.getElementById("ozColdMain").value = cfg.coldMain || DEFAULT_OZ_COLD_MAIN;
+  document.getElementById("ozColdMainCount").value = cfg.coldMainCount ?? 5;
+  document.getElementById("ozAvoidPopular").checked = cfg.avoidPopular ?? false;
+}
+
+function saveOzConfig() {
+  const cfg = {
+    hotMain: document.getElementById("ozHotMain").value,
+    hotMainCount: parseInt(document.getElementById("ozHotMainCount").value, 10) || 0,
+    coldMain: document.getElementById("ozColdMain").value,
+    coldMainCount: parseInt(document.getElementById("ozColdMainCount").value, 10) || 0,
+    avoidPopular: document.getElementById("ozAvoidPopular").checked,
+  };
+  localStorage.setItem("ozHallOfFame", JSON.stringify(cfg));
+  const msg = document.getElementById("ozSaveMsg");
+  msg.textContent = I18N[currentLang].saveMsg;
+  setTimeout(() => (msg.textContent = ""), 2000);
+}
+
 function shuffle(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -347,7 +479,7 @@ function range(a, b) {
 }
 
 const CALENDAR_MAX = 31; // 생일/기념일로 흔히 쓰이는 최대 날짜
-const UNPOPULAR_WEIGHT = 5; // 32~35 등 달력 밖 번호에 주는 가중치
+const UNPOPULAR_WEIGHT = 5; // 달력 밖 번호에 주는 가중치
 
 // 가중치를 적용해 중복 없이 count개를 뽑는다 (뽑힌 번호는 후보에서 제거하며 반복)
 function pickWeighted(numbers, weightFn, count) {
@@ -366,27 +498,28 @@ function pickWeighted(numbers, weightFn, count) {
   return picked;
 }
 
-function generateMain(hot, cold, hotCount, coldCount, avoidPopular) {
-  const hotValid = hot.filter(n => n >= MAIN_RANGE[0] && n <= MAIN_RANGE[1]);
-  const uniqueHot = [...new Set(hotValid)].slice(0, Math.min(hotCount, MAIN_PICKS));
+// 게임 공용 번호 생성기: bounds=[min,max], picks=뽑을 개수
+function generateNumbers(bounds, picks, hot, cold, hotCount, coldCount, avoidPopular) {
+  const hotValid = hot.filter(n => n >= bounds[0] && n <= bounds[1]);
+  const uniqueHot = [...new Set(hotValid)].slice(0, Math.min(hotCount, picks));
 
   let coldList = [...new Set(cold)]
     .filter(n => !uniqueHot.includes(n))
     .slice(0, coldCount);
 
-  const needed = MAIN_PICKS - uniqueHot.length;
+  const needed = picks - uniqueHot.length;
 
   // 안전장치: hot+cold 설정이 너무 많아 뽑을 번호가 부족해지면
   // 순위가 낮은(뒤쪽) cold 번호부터 제외 목록에서 풀어준다.
   while (
     coldList.length > 0 &&
-    MAIN_RANGE[1] - MAIN_RANGE[0] + 1 - uniqueHot.length - coldList.length < needed
+    bounds[1] - bounds[0] + 1 - uniqueHot.length - coldList.length < needed
   ) {
     coldList = coldList.slice(0, -1);
   }
   const coldSet = new Set(coldList);
 
-  const pool = range(MAIN_RANGE[0], MAIN_RANGE[1])
+  const pool = range(bounds[0], bounds[1])
     .filter(n => !uniqueHot.includes(n) && !coldSet.has(n));
 
   const picked = avoidPopular
@@ -429,7 +562,7 @@ function generateSets() {
   resultsEl.innerHTML = "";
 
   for (let s = 0; s < numSets; s++) {
-    const main = generateMain(hotMain, coldMain, hotMainCount, coldMainCount, avoidPopular);
+    const main = generateNumbers(MAIN_RANGE, MAIN_PICKS, hotMain, coldMain, hotMainCount, coldMainCount, avoidPopular);
     const pb = generatePowerball(hotPB, coldPB);
 
     const ballsHtml = main.numbers
@@ -443,15 +576,60 @@ function generateSets() {
   }
 }
 
+function generateOzSets() {
+  const hotMain = parseNums(document.getElementById("ozHotMain").value);
+  const hotMainCount = Math.max(0, parseInt(document.getElementById("ozHotMainCount").value, 10) || 0);
+  const coldMain = parseNums(document.getElementById("ozColdMain").value);
+  const coldMainCount = Math.max(0, parseInt(document.getElementById("ozColdMainCount").value, 10) || 0);
+  const numSets = Math.max(1, parseInt(document.getElementById("ozNumSets").value, 10) || 1);
+  const avoidPopular = document.getElementById("ozAvoidPopular").checked;
+
+  const resultsEl = document.getElementById("ozResults");
+  resultsEl.innerHTML = "";
+
+  for (let s = 0; s < numSets; s++) {
+    const main = generateNumbers(OZ_RANGE, OZ_PICKS, hotMain, coldMain, hotMainCount, coldMainCount, avoidPopular);
+
+    const ballsHtml = main.numbers
+      .map(n => renderBall(n, main.hotUsed.includes(n) ? "hot" : ""))
+      .join("");
+
+    const div = document.createElement("div");
+    div.className = "set-card";
+    div.innerHTML = `<div class="set-label">${I18N[currentLang].setLabel} ${s + 1}</div><div class="balls">${ballsHtml}</div>`;
+    resultsEl.appendChild(div);
+  }
+}
+
+function switchTab(tab) {
+  document.getElementById("panel-powerball").hidden = tab !== "powerball";
+  document.getElementById("panel-ozlotto").hidden = tab !== "ozlotto";
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.tab === tab);
+  });
+  localStorage.setItem("pbActiveTab", tab);
+}
+
+document.querySelectorAll(".tab-btn").forEach(b => {
+  b.addEventListener("click", () => switchTab(b.dataset.tab));
+});
+
 document.getElementById("saveBtn").addEventListener("click", saveConfig);
 document.getElementById("genBtn").addEventListener("click", () => {
   saveConfig();
   generateSets();
 });
+document.getElementById("ozSaveBtn").addEventListener("click", saveOzConfig);
+document.getElementById("ozGenBtn").addEventListener("click", () => {
+  saveOzConfig();
+  generateOzSets();
+});
 document.getElementById("langSelect").addEventListener("change", (e) => applyLanguage(e.target.value));
 
 applyLanguage(currentLang);
 loadConfig();
+loadOzConfig();
+switchTab(localStorage.getItem("pbActiveTab") || "powerball");
 </script>
 </body>
 </html>
