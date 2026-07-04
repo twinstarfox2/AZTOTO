@@ -501,7 +501,15 @@ function pickWeighted(numbers, weightFn, count) {
 // 게임 공용 번호 생성기: bounds=[min,max], picks=뽑을 개수
 function generateNumbers(bounds, picks, hot, cold, hotCount, coldCount, avoidPopular) {
   const hotValid = hot.filter(n => n >= bounds[0] && n <= bounds[1]);
-  const uniqueHot = [...new Set(hotValid)].slice(0, Math.min(hotCount, picks));
+  let uniqueHotCandidates = [...new Set(hotValid)];
+  if (avoidPopular) {
+    // 비인기 번호 모드에서는 강제 포함할 Hot 번호도 달력 밖(32+) 번호를 먼저 채택한다
+    uniqueHotCandidates = [
+      ...uniqueHotCandidates.filter(n => n > CALENDAR_MAX),
+      ...uniqueHotCandidates.filter(n => n <= CALENDAR_MAX),
+    ];
+  }
+  const uniqueHot = uniqueHotCandidates.slice(0, Math.min(hotCount, picks));
 
   let coldList = [...new Set(cold)]
     .filter(n => !uniqueHot.includes(n))
