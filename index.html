@@ -10,7 +10,7 @@
 <style>
   :root{
     --bg:#0f1220; --card:#1b1f33; --accent:#ffb400; --accent2:#ff5c5c;
-    --text:#f2f2f7; --muted:#9aa0b4; --good:#4ade80;
+    --text:#f2f2f7; --muted:#9aa0b4; --good:#4ade80; --cool:#38bdf8;
   }
   *{box-sizing:border-box;}
   body{
@@ -74,6 +74,7 @@
     background:#dfe3f0;
   }
   .ball.hot{ background:var(--accent); box-shadow:0 0 0 2px #7a5200 inset; }
+  .ball.cool{ background:var(--cool); color:#082f49; }
   .ball.pb{ background:var(--accent2); color:#2a0000; }
   .set-card{ margin-top:12px; }
   .set-label{ font-size:12px; color:var(--muted); margin-bottom:6px; }
@@ -166,6 +167,8 @@
         &nbsp;&nbsp;
         <span class="dot" style="background:#dfe3f0"></span> <span data-i18n="legendRandom">랜덤 번호</span>
         &nbsp;&nbsp;
+        <span class="dot" style="background:var(--cool)"></span> <span data-i18n="legendCool">비인기(달력 밖) 번호</span>
+        &nbsp;&nbsp;
         <span class="dot" style="background:var(--accent2)"></span> <span data-i18n="legendPB">파워볼</span>
       </div>
 
@@ -229,6 +232,8 @@
         <span class="dot" style="background:var(--accent)"></span> <span data-i18n="legendHot">명예의 전당(Hot) 번호</span>
         &nbsp;&nbsp;
         <span class="dot" style="background:#dfe3f0"></span> <span data-i18n="legendRandom">랜덤 번호</span>
+        &nbsp;&nbsp;
+        <span class="dot" style="background:var(--cool)"></span> <span data-i18n="legendCool">비인기(달력 밖) 번호</span>
       </div>
 
       <div id="ozResults"></div>
@@ -305,6 +310,7 @@ const I18N = {
     genBtn: "번호 생성하기",
     legendHot: "명예의 전당(Hot) 번호",
     legendRandom: "랜덤 번호",
+    legendCool: "비인기(달력 밖) 번호",
     legendPB: "파워볼",
     setLabel: "조합",
     howToTitle: "📱 아이폰에서 앱처럼 쓰는 방법 (App Store 설치 없이)",
@@ -357,6 +363,7 @@ const I18N = {
     genBtn: "Generate Numbers",
     legendHot: "Hall of Fame (Hot) number",
     legendRandom: "Random number",
+    legendCool: "Unpopular (non-calendar) number",
     legendPB: "Powerball",
     setLabel: "Set",
     howToTitle: "📱 Use it like an app on iPhone (no App Store install)",
@@ -556,6 +563,12 @@ function renderBall(n, cls) {
   return `<div class="ball ${cls || ""}">${n}</div>`;
 }
 
+function mainBallClass(n, hotUsed) {
+  if (hotUsed.includes(n)) return "hot";
+  if (n > CALENDAR_MAX) return "cool";
+  return "";
+}
+
 function generateSets() {
   const hotMain = parseNums(document.getElementById("hotMain").value);
   const hotMainCount = Math.max(0, parseInt(document.getElementById("hotMainCount").value, 10) || 0);
@@ -574,7 +587,7 @@ function generateSets() {
     const pb = generatePowerball(hotPB, coldPB);
 
     const ballsHtml = main.numbers
-      .map(n => renderBall(n, main.hotUsed.includes(n) ? "hot" : ""))
+      .map(n => renderBall(n, mainBallClass(n, main.hotUsed)))
       .join("") + renderBall(pb.number, "pb" + (pb.isHot ? " hot" : ""));
 
     const div = document.createElement("div");
@@ -599,7 +612,7 @@ function generateOzSets() {
     const main = generateNumbers(OZ_RANGE, OZ_PICKS, hotMain, coldMain, hotMainCount, coldMainCount, avoidPopular);
 
     const ballsHtml = main.numbers
-      .map(n => renderBall(n, main.hotUsed.includes(n) ? "hot" : ""))
+      .map(n => renderBall(n, mainBallClass(n, main.hotUsed)))
       .join("");
 
     const div = document.createElement("div");
